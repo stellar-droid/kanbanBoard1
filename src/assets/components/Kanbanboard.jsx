@@ -15,6 +15,8 @@ export default function KanbanBoard() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [action, setAction] = useState(true);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
   const staticData = [
     { id: "2", title: "Device 2", rack: "4" },
     { id: "1", title: "Device 1", rack: "4" },
@@ -34,7 +36,7 @@ export default function KanbanBoard() {
     { id: "10.10.10.143", title: "OPM-Server27", rack: "4" },
     { id: "10.10.10.142", title: "OPM-Server28", rack: "4" },
     { id: "10.10.10.141", title: "OPM-Server32", rack: "4" },
-    { id: "10.10.10.140", title: "OPM-Server33", rack: "4" }
+    { id: "10.10.10.140", title: "OPM-Server33", rack: "4" },
 
     // Add more devices as needed
   ];
@@ -68,18 +70,25 @@ export default function KanbanBoard() {
       closeForm();
     }
   };
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
+
   // <-------------------HANDLE ESCAPE KEY ENDS----------------->
 
   // <-------------------HANDLE DRAG START----------------->
   const handleDragEnd = (result) => {
 
-    
+    setIsDragging(false); // Reset isDragging after drag ends
+
+    if (!formSubmitted) {
+      // Prevent drag-drop if formSubmitted is false
+      return;
+    }
 
 
     const { destination, source, draggableId } = result;
-    // if (!formSubmitted) {
-    //   return;
-    // }
 
     console.log("Dragged Device Id:", draggableId);
     console.log("Source Rack Id:", source.droppableId);
@@ -99,11 +108,11 @@ export default function KanbanBoard() {
       const [removedTask] = updatedRack.splice(source.index, 1);
       updatedRack.splice(destination.index, 0, removedTask);
 
-      if (source.droppableId === "1"&& formSubmitted===true) {
+      if (source.droppableId === "1" && formSubmitted === true) {
         setRack1(updatedRack);
-      } else if (source.droppableId === "2"&& formSubmitted===true) {
+      } else if (source.droppableId === "2" && formSubmitted === true) {
         setRack2(updatedRack);
-      } else if (source.droppableId === "3"&& formSubmitted===true) {
+      } else if (source.droppableId === "3" && formSubmitted === true) {
         setRack3(updatedRack);
       }
 
@@ -221,7 +230,9 @@ export default function KanbanBoard() {
         : null;
     }
   };
-
+  const DragUpdate = (update) => {
+    console.log("update", update);
+  };
   // <-------------------HANDLE DRAG START ENDS----------------->
 
   // <-------------------OPEN FORM----------------->
@@ -259,7 +270,11 @@ export default function KanbanBoard() {
 
   return (
     <>
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragUpdate={DragUpdate}
+      >
         <h2 style={{ textAlign: "center" }}>Rack View </h2>
 
         <div

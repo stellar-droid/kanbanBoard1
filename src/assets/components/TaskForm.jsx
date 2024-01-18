@@ -104,7 +104,7 @@ const TaskForm = ({ onClose, formSubmitted,setFormSubmitted }) => {
         margin="normal"
       />
 
-      <Button variant="contained" color="primary" fullWidth onClick={setFormSubmitted(true)}>
+      <Button variant="contained" color="primary" fullWidth onClick={() => setFormSubmitted(true)}>
         Submit and Continue
       </Button>
     </form>
